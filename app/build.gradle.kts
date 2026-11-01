@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "se.sojo.minicalculator"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
