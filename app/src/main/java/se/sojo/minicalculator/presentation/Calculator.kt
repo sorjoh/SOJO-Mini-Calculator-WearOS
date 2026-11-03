@@ -1,22 +1,27 @@
 package se.sojo.minicalculator.presentation
 
-class Calculator(var decimalSeparator: Char, var maxInputLength: Int, debug2: Boolean) {
-    var debug = debug2
+import java.math.BigDecimal
 
-    companion object {
-        val debug: Boolean = debug2
-        var decimalSeparator: Char = '.'
-        var maxInputLength = 0
-       // var debug = false
-    }
 
-    init {
-        decimalSeparator = this.decimalSeparator
-        maxInputLength = this.maxInputLength
-        //debug = this.debug
-        debug = debug2
-    }
+class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, var debug: Boolean = false) {
+    // Status indicator if equal button or another calculation has presented a total result
+    var hasResult: Boolean? = null
 
+    // Variables holding current operations
+    var currentOperator: Operator? = Operator.NONE
+    var hasOperator: Boolean? = null
+
+    // Variables holding the result and input values
+    var resultValue: BigDecimal? = null
+    var firstValue: BigDecimal? = null
+    var secondValue: BigDecimal? = null
+
+    // Variables holding the input and output text
+    var inputValue: String? = null
+    var outputValue: String? = null
+
+    // Variable for checking if equal has been pressed or not
+    var isEqual: Boolean? = null
     enum class Operator {
         PLUS,
         MINUS,
@@ -25,7 +30,7 @@ class Calculator(var decimalSeparator: Char, var maxInputLength: Int, debug2: Bo
         NONE
     }
 
-    fun getOperationBySign(operator: Operator): String {
+    fun getOperationBySign(operator: Operator?): String {
         return when (operator) {
             Operator.PLUS -> "+"
             Operator.MINUS -> "-"
@@ -33,5 +38,27 @@ class Calculator(var decimalSeparator: Char, var maxInputLength: Int, debug2: Bo
             Operator.DIVIDE -> "÷"
             else -> ""
         }
+    }
+
+    // ========= Reset Values =========
+    fun resetValues() {
+        // Status indicator if equal button or another calculation has presented a total result
+        hasResult = false
+
+        // Variables holding current operations
+        currentOperator = Operator.NONE
+        hasOperator = false
+
+        // Variables holding the result and input values
+        resultValue = BigDecimal(0)
+        firstValue = BigDecimal(0)
+        secondValue = BigDecimal(0)
+
+        // Variables holding the input and output text
+        inputValue = ""
+        outputValue = ""
+
+        // Variable for checking if equal has been pressed or not
+        isEqual = false
     }
 }

@@ -46,6 +46,7 @@ fun WearApp() {
                 val decimalSeparator = dfs.decimalSeparator
 
                 val calculator = Calculator(decimalSeparator, MAX_INPUT_LENGTH, DEBUG)
+                calculator.resetValues()
 
                 CalculatorScreen(calculator, defaultRowModifier, defaultButtonModifier)
             }
