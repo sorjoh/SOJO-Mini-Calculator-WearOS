@@ -1,6 +1,8 @@
 package se.sojo.minicalculator.presentation
 
 import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 
 
 class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, var debug: Boolean = false) {
@@ -30,7 +32,7 @@ class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, 
         NONE
     }
 
-    fun getOperationBySign(operator: Operator?): String {
+    fun getOperationSign(operator: Operator?): String {
         return when (operator) {
             Operator.PLUS -> "+"
             Operator.MINUS -> "-"
@@ -40,6 +42,33 @@ class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, 
         }
     }
 
+    // ========= GET OPERATOR =========
+    fun getOperation(key: String): Operator {
+        return when (key) {
+            "+" -> Operator.PLUS
+            "−", "-" -> Operator.MINUS
+            "×", "*", "x", "X" -> Operator.MULTIPLY
+            "÷", "/" -> Operator.DIVIDE
+            else -> Operator.NONE
+        }
+    }
+
+    // ========= CALCULATE RESULT =========
+    fun calculate(
+        firstValue: BigDecimal?,
+        secondValue: BigDecimal?,
+        operation: Operator?
+    ): BigDecimal? {
+        val mc: MathContext = MathContext(10, RoundingMode.DOWN)
+
+        return when (operation) {
+            Operator.PLUS -> firstValue?.add(secondValue)
+            Operator.MINUS -> firstValue?.subtract(secondValue)
+            Operator.MULTIPLY -> firstValue?.multiply(secondValue)
+            Operator.DIVIDE -> firstValue?.divide(secondValue, mc)
+            else -> firstValue
+        }
+    }
     // ========= Reset Values =========
     fun resetValues() {
         // Status indicator if equal button or another calculation has presented a total result

@@ -67,7 +67,7 @@ fun CalculatorScreen(
                 onClick = { viewModel.onNumberInput("9") }
             )
             CalculatorButton(
-                text = calculator.getOperationBySign(operator = Calculator.Operator.MULTIPLY),
+                text = calculator.getOperationSign(operator = Calculator.Operator.MULTIPLY),
                 modifier = defaultButtonModifier,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.MULTIPLY) }
             )
@@ -93,7 +93,7 @@ fun CalculatorScreen(
                 onClick = { viewModel.onNumberInput("6") }
             )
             CalculatorButton(
-                text = calculator.getOperationBySign(operator = Calculator.Operator.DIVIDE),
+                text = calculator.getOperationSign(operator = Calculator.Operator.DIVIDE),
                 modifier = defaultButtonModifier,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.DIVIDE) }
             )
@@ -119,7 +119,7 @@ fun CalculatorScreen(
                 onClick = { viewModel.onNumberInput("3") }
             )
             CalculatorButton(
-                text = calculator.getOperationBySign(operator = Calculator.Operator.PLUS),
+                text = calculator.getOperationSign(operator = Calculator.Operator.PLUS),
                 modifier = defaultButtonModifier,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.PLUS) }
             )
@@ -144,7 +144,7 @@ fun CalculatorScreen(
                 modifier = defaultButtonModifier,
                 onClick = { viewModel.onEqual() })
             CalculatorButton(
-                text = calculator.getOperationBySign(operator = Calculator.Operator.MINUS),
+                text = calculator.getOperationSign(operator = Calculator.Operator.MINUS),
                 modifier = defaultButtonModifier,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.MINUS) })
         }
