@@ -5,11 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import se.sojo.minicalculator.presentation.Calculator
 import java.math.BigDecimal
-import java.util.Objects
-
 
 class CalculatorViewModel : ViewModel() {
-
     var display = mutableStateOf("")
 
     var calculator: Calculator = Calculator()
@@ -34,22 +31,18 @@ class CalculatorViewModel : ViewModel() {
                     ?.split(calculator.getOperationSign(calculator.currentOperator))
 
                 // If inputValue is zero then replace inputValue with the number, otherwise add the number
-                calculator.inputValue = if (Objects.equals(
-                        calculator.inputValue,
-                        "0"
-                    )
-                ) inputKey else calculator.inputValue + inputKey
+                calculator.inputValue = if (calculator.inputValue == "0") inputKey else calculator.inputValue + inputKey
 
                 // Set current result initially as the first split value from the outputValue
                 currentResultValue = (splitOutputValue?.get(0) ?: calculator.outputValue).toString()
 
                 // Add minus sign in the beginning if current result value is empty and operator is minus
                 if (calculator.currentOperator === Calculator.Operator.MINUS && currentResultValue.isEmpty()) {
-                    currentResultValue =
-                        calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                    currentResultValue = calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
                 }
             } catch (e: Exception) {
-                if (calculator.debug) println(e.message + ", outputValue=" + calculator.outputValue)
+                if (calculator.debug)
+                    Log.d("SOJO Debug:", e.message + ", outputValue=" + calculator.outputValue)
 
                 // Error fix when splitting outputValue
                 calculator.inputValue += inputKey
@@ -57,8 +50,7 @@ class CalculatorViewModel : ViewModel() {
             }
 
             // Replace output value with the temporary current result value together with current operator sign and input value
-            calculator.outputValue =
-                currentResultValue + calculator.getOperationSign(calculator.currentOperator) + calculator.inputValue
+            calculator.outputValue = currentResultValue + calculator.getOperationSign(calculator.currentOperator) + calculator.inputValue
         } else {
             // Otherwise add the number to input value
             calculator.inputValue += inputKey
@@ -66,17 +58,14 @@ class CalculatorViewModel : ViewModel() {
             calculator.outputValue = calculator.inputValue
         }
 
-
         // Equal button has not been pressed
         calculator.isEqual = false //Bugfix for example 2.3 + 5 = .
-
 
         // Display the output
         displayOutput(calculator.outputValue)
 
         if (calculator.debug)
             Log.d("SOJO Debug:", "Number(after) : button=" + inputKey + ", inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(calculator.currentOperator) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator)
-
     }
 
     fun onDecimalInput(decimal: Char) {
@@ -98,50 +87,42 @@ class CalculatorViewModel : ViewModel() {
 
                 if (calculator.hasOperator == true) { // Calculation has operator
                     // Set output value to the first split output value plus the current operator sign
-                    calculator.outputValue =
-                        splitOutputValue?.get(0) + calculator.getOperationSign(calculator.currentOperator)
+                    calculator.outputValue = splitOutputValue?.get(0) + calculator.getOperationSign(calculator.currentOperator)
                     // Set input value to the second split output value
                     calculator.inputValue = splitOutputValue?.get(1)
                 } else { // Otherwise if calculation has no operator
+                    // If equal has been pressed before this button then replace inputValue with an empty string, otherwise add the first split value
+                    calculator.inputValue = if (calculator.isEqual == true) "" else calculator.outputValue
+
                     // Set output value to an empty string
                     calculator.outputValue = ""
-
-                    // If equal has been pressed before this button then replace inputValue with an empty string, otherwise add the first split value
-                    calculator.inputValue = if (calculator.isEqual == true) "" else splitOutputValue?.get(0)
                 }
-            } catch (e: java.lang.Exception) {
-                if (calculator.debug) println(e.message + ", outputValue=" + calculator.outputValue)
+            } catch (e: Exception) {
+                if (calculator.debug)
+                    Log.d("SOJO Debug:", e.message + ", outputValue=" + calculator.outputValue)
 
                 // Error fix when splitting outputValue
-                calculator.hasOperator?.let {
-                    if (!it) {
-                        calculator.outputValue = ""
-                    }
+                if (calculator.hasOperator == false) {
+                    calculator.outputValue = ""
                 }
             }
 
             // Check if input value already contains a decimal otherwise add the decimal separator
-            calculator.inputValue?.contains(decimal)?.let {
-                if (!it) {
-                    calculator.inputValue += decimal
-                }
+            if (calculator.inputValue?.contains(decimal) == false) {
+                calculator.inputValue += decimal
             }
         }
 
-
         // Add a zero before the decimal separator if the input value begins with a decimal
-        if (calculator.inputValue!!.startsWith(decimal)) {
+        if (calculator.inputValue?.startsWith(decimal) == true) {
             calculator.inputValue = "0" + calculator.inputValue
         }
-
 
         // Add the decimal and the result of input value to the output value
         calculator.outputValue += calculator.inputValue
 
-
         // Equal button has not been pressed
         calculator.isEqual = false
-
 
         // Display the output
         displayOutput(calculator.outputValue)
@@ -174,8 +155,8 @@ class CalculatorViewModel : ViewModel() {
                 val splitOutputValue: List<String>? = calculator.outputValue?.trim()
                     ?.split(calculator.getOperationSign(calculator.currentOperator))
 
-                        // Reset values
-                        calculator.resetValues()
+                // Reset values
+                calculator.resetValues()
 
                 // Set output value to the first split output value
                 calculator.outputValue = splitOutputValue?.get(0)
@@ -185,13 +166,13 @@ class CalculatorViewModel : ViewModel() {
                 // Add minus sign in the beginning if current output value is empty and previous operator is minus
                 if (previousOperator == Calculator.Operator.MINUS && calculator.outputValue?.isEmpty() == true) {
                     // Set output value to the second split output value
-                    calculator.outputValue =
-                        calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                    calculator.outputValue = calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
                     // Set input value to the third split output value
                     calculator.inputValue = splitOutputValue?.get(2)
                 }
-            } catch (e: java.lang.Exception) {
-                if (calculator.debug) println(e.message + ", outputValue=" + calculator.outputValue)
+            } catch (e: Exception) {
+                if (calculator.debug)
+                    Log.d("SOJO Debug:", e.message + ", outputValue=" + calculator.outputValue)
 
                 // Set flag to not do any calculation when the error happens, for example 12 * /
                 doNotCalculate = true
@@ -200,23 +181,24 @@ class CalculatorViewModel : ViewModel() {
                 calculator.inputValue = "0"
 
                 // Replace the decimal from localities with a dot for the calculation
-                calculator.resultValue =
-                    BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+                calculator.resultValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
             }
 
             // Convert and replace the decimal from localities with a dot for the calculation
             calculator.firstValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
-            calculator.secondValue = BigDecimal(calculator.inputValue?.replace(calculator.decimalSeparator, '.'))
 
             // Fix for example 12 * %
             if (!doNotCalculate) {
                 try {
+                    // Convert and replace the decimal from localities with a dot for the calculation
+                    calculator.secondValue = BigDecimal(calculator.inputValue?.replace(calculator.decimalSeparator, '.'))
+
                     // Calculate the result
-                    calculator.resultValue =
-                        calculator.calculate(calculator.firstValue, calculator.secondValue, previousOperator)
-                } catch (e: java.lang.Exception) {
-                    if (calculator.debug)
-                        e.message?.let { Log.d("SOJO Debug:",it) }
+                    calculator.resultValue = calculator.calculate(calculator.firstValue, calculator.secondValue, previousOperator)
+                } catch (e: Exception) {
+                    if (calculator.debug) {
+                       Log.d("SOJO Debug:", e.message.toString())
+                    }
 
                     // Convert and replace the decimal from localities with a dot for the calculation
                     calculator.resultValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
@@ -230,7 +212,7 @@ class CalculatorViewModel : ViewModel() {
             calculator.inputValue = ""
 
             // Replace output value with the result and local decimal separator, plus the current operator sign
-            calculator.outputValue = java.lang.String.valueOf(calculator.resultValue)
+            calculator.outputValue = calculator.resultValue.toString()
                 .replace('.', calculator.decimalSeparator) + calculator.getOperationSign(calculator.currentOperator)
         } else if (calculator.outputValue?.isEmpty() == true) { // Output value is empty
             // Reset values
@@ -290,20 +272,19 @@ class CalculatorViewModel : ViewModel() {
             // Add minus sign in the beginning if current output value is empty and current operator is minus
             if (calculator.currentOperator === Calculator.Operator.MINUS && calculator.outputValue?.isEmpty() == true) {
                 // Set output value to the second split output value
-                calculator.outputValue =
-                    calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                calculator.outputValue = calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
                 // Set input value to the third split output value
                 calculator.inputValue = splitOutputValue?.get(2)
             } else { // Otherwise set input value to the second split output value
                 calculator.inputValue = splitOutputValue?.get(1)
             }
-        } catch (e: java.lang.Exception) {
-            if (calculator.debug)
-                e.message?.let { Log.d("SOJO Debug:",it) }
+        } catch (e: Exception) {
+            if (calculator.debug) {
+                Log.d("SOJO Debug:",e.message.toString())
+            }
 
             // Reset all values if Equal been pressed twice, otherwise reset all values except for the output value
-            val tmpOutputValue: String? =
-                if (calculator.isEqual == true) "" else calculator.outputValue // Save outputValue if needed
+            val tmpOutputValue: String? = if (calculator.isEqual == true) "" else calculator.outputValue // Save outputValue if needed
 
             // Reset values
             calculator.resetValues()
@@ -315,30 +296,29 @@ class CalculatorViewModel : ViewModel() {
         if (calculator.hasOperator == true) { // Calculation has operator
             // Set firstValue as BigDecimal value of outputValue plus convert and replace the decimal from localities with a dot for the calculation
             calculator.firstValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
-            // Set firstValue as BigDecimal value of inputValue plus convert and replace the decimal from localities with a dot for the calculation
-            calculator.secondValue = BigDecimal(calculator.inputValue?.replace(calculator.decimalSeparator, '.'))
 
-            // Calculate the result
-            calculator.resultValue =
+            // Set secondValue if it is not empty as BigDecimal value of inputValue plus convert and replace the decimal from localities with a dot for the calculation
+            calculator.resultValue = if (calculator.inputValue?.isEmpty() == false) {
+                calculator.secondValue = BigDecimal(calculator.inputValue?.replace(calculator.decimalSeparator, '.'))
+
+                // Calculate the result
                 calculator.calculate(calculator.firstValue, calculator.secondValue, calculator.currentOperator)
+            } else {
+                calculator.firstValue
+            }
         } else {
             // Set resultValue as BigDecimal value of outputValue plus convert and replace the decimal from localities with a dot for the calculation
-            calculator.resultValue = calculator.outputValue?.isEmpty()?.let {
-                if (!it) BigDecimal(
-                    calculator.outputValue?.replace(
-                        calculator.decimalSeparator,
-                        '.'
-                    )
-                ) else BigDecimal("0")
-            }
+            calculator.resultValue = if (calculator.outputValue?.isEmpty() == false)
+                BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+            else
+                BigDecimal("0")
         }
 
         // Set input value to an empty string
         calculator.inputValue = ""
 
         // Convert result value to string plus convert and replace the decimal from localities with a dot for the calculation
-        calculator.outputValue =
-            java.lang.String.valueOf(calculator.resultValue).replace('.', calculator.decimalSeparator)
+        calculator.outputValue = calculator.resultValue.toString().replace('.', calculator.decimalSeparator)
 
         // Set current operator to none
         calculator.currentOperator = Calculator.Operator.NONE
@@ -365,24 +345,7 @@ class CalculatorViewModel : ViewModel() {
 
     // ========= DISPLAY OUTPUT =========
     private fun displayOutput(output: String? = "0") {
-        //val space = StringBuilder()
-
-        // Add a zero if output is empty
-        //val tmp = if (output.isEmpty()) "0" else output
-
-        // Add space so the output is aligned at right
-        //space.append(" ".repeat(Math.max(0, MAX_INPUT_LENGTH - tmp.length)))
-
-        // Display output with needed spaces
-        //display.setText(space.toString() + tmp)
-
+        // Display the output
         display.value = output.toString()
-
-        /*if (output != null) {
-            Log.d("SOJO Debug:", "test " + output)
-        }*/
-
-        //calculator.outputValue = output
-
     }
 }

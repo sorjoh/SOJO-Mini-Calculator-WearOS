@@ -18,30 +18,39 @@ import se.sojo.minicalculator.presentation.Calculator
 @Composable
 fun CalculatorScreen(
     calculator: Calculator,
-    defaultRowModifier: Modifier,
-    defaultButtonModifier: Modifier,
     viewModel: CalculatorViewModel = CalculatorViewModel() )
 {
+    // Include the calculator class in the viewmodel
     viewModel.calculator = calculator
 
+    // Needed for the display output
     LaunchedEffect(key1 = viewModel.display.value) {
-        viewModel.calculator.outputValue?.let { Log.d("SOJO Debug:", it) }
+       viewModel.display.value.let { Log.d("SOJO Debug:", it) }
     }
 
+    // TODO: Fix the layout for rounded clocks
     Column(
         modifier = Modifier
     ) {
+        val rowHeight = 0.20f // Weight for the rows
+        val columnWidth = 0.25f // Weight for the buttons
+
         // Display
         Row(
-            modifier = defaultRowModifier.padding(end = 4.dp)
+            modifier = Modifier.weight(rowHeight).padding(end = 4.dp)
         ) {
             viewModel.calculator.outputValue?.let {
+                val output = it.ifEmpty { "0" }
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(alignment = Alignment.CenterVertically),
-                    text = it.ifEmpty { "0" },
-                    fontSize = 20.sp,
+                    // Adjust the output according to max input length
+                    text = if (output.length > calculator.maxInputLength)
+                        "${output.substring(0, calculator.maxInputLength)}...${it.substring(it.length - 1)}"
+                    else
+                        output,
+                    fontSize = 20.sp, // TODO: Adjust fontsize for different screens
                     textAlign = TextAlign.End
                 )
             }
@@ -49,103 +58,103 @@ fun CalculatorScreen(
 
         // 7, 8, 9, *
         Row(
-            modifier = defaultRowModifier
+            modifier = Modifier.weight(rowHeight)
         ) {
             CalculatorButton(
                 text = "7",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("7") }
             )
             CalculatorButton(
                 text = "8",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("8") }
             )
             CalculatorButton(
                 text = "9",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("9") }
             )
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.MULTIPLY),
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.MULTIPLY) }
             )
         }
 
         // 4, 5, 6, /
         Row(
-            modifier = defaultRowModifier
+            modifier = Modifier.weight(rowHeight)
         ) {
             CalculatorButton(
                 text = "4",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("4") }
             )
             CalculatorButton(
                 text = "5",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("5") }
             )
             CalculatorButton(
                 text = "6",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("6") }
             )
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.DIVIDE),
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.DIVIDE) }
             )
         }
 
         // 1, 2, 3, +
         Row(
-            modifier = defaultRowModifier
+            modifier = Modifier.weight(rowHeight)
         ) {
             CalculatorButton(
                 text = "1",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("1") }
             )
             CalculatorButton(
                 text = "2",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("2") }
             )
             CalculatorButton(
                 text = "3",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("3") }
             )
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.PLUS),
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.PLUS) }
             )
         }
 
         // 0, ., =, -
         Row(
-            modifier = defaultRowModifier
+            modifier = Modifier.weight(rowHeight)
         ) {
             CalculatorButton(
                 text = "0",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onNumberInput("0") }
             )
             CalculatorButton(
                 text = calculator.decimalSeparator.toString(),
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onDecimalInput(decimal = calculator.decimalSeparator) }
             )
             CalculatorButton(
                 text = "=",
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onEqual() })
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.MINUS),
-                modifier = defaultButtonModifier,
+                modifier = Modifier.weight(columnWidth),
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.MINUS) })
         }
     }

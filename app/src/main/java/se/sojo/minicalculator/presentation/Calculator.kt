@@ -4,7 +4,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 
-
 class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, var debug: Boolean = false) {
     // Status indicator if equal button or another calculation has presented a total result
     var hasResult: Boolean? = null
@@ -24,6 +23,8 @@ class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, 
 
     // Variable for checking if equal has been pressed or not
     var isEqual: Boolean? = null
+
+    // ========= OPERATOR =========
     enum class Operator {
         PLUS,
         MINUS,
@@ -32,6 +33,7 @@ class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, 
         NONE
     }
 
+    // ========= GET OPERATOR SIGN =========
     fun getOperationSign(operator: Operator?): String {
         return when (operator) {
             Operator.PLUS -> "+"
@@ -42,24 +44,13 @@ class Calculator(var decimalSeparator: Char = '.', var maxInputLength: Int = 0, 
         }
     }
 
-    // ========= GET OPERATOR =========
-    fun getOperation(key: String): Operator {
-        return when (key) {
-            "+" -> Operator.PLUS
-            "−", "-" -> Operator.MINUS
-            "×", "*", "x", "X" -> Operator.MULTIPLY
-            "÷", "/" -> Operator.DIVIDE
-            else -> Operator.NONE
-        }
-    }
-
     // ========= CALCULATE RESULT =========
     fun calculate(
         firstValue: BigDecimal?,
         secondValue: BigDecimal?,
         operation: Operator?
     ): BigDecimal? {
-        val mc: MathContext = MathContext(10, RoundingMode.DOWN)
+        val mc = MathContext(10, RoundingMode.DOWN)
 
         return when (operation) {
             Operator.PLUS -> firstValue?.add(secondValue)

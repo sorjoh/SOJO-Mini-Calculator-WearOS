@@ -15,10 +15,10 @@ import se.sojo.minicalculator.presentation.ui.CalculatorScreen
 import java.text.DecimalFormatSymbols
 
 // Use debugging if needed
-const val DEBUG: Boolean = true
+const val DEBUG: Boolean = false
 
 // Max length of the display numbers
-val MAX_INPUT_LENGTH: Int = 15
+const val MAX_INPUT_LENGTH: Int = 13
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,17 +38,16 @@ fun WearApp() {
             Row(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                val defaultRowModifier: Modifier = Modifier.weight(0.20f)
-                val defaultButtonModifier: Modifier = Modifier.weight(0.25f)
-
                 // Get decimal separator
-                val dfs: DecimalFormatSymbols = DecimalFormatSymbols()
+                val dfs = DecimalFormatSymbols()
                 val decimalSeparator = dfs.decimalSeparator
 
+                // Initialize Calculator
                 val calculator = Calculator(decimalSeparator, MAX_INPUT_LENGTH, DEBUG)
                 calculator.resetValues()
 
-                CalculatorScreen(calculator, defaultRowModifier, defaultButtonModifier)
+                // Initialize UI
+                CalculatorScreen(calculator)
             }
         }
     }
