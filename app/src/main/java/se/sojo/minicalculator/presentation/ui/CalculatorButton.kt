@@ -2,6 +2,7 @@ package se.sojo.minicalculator.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TextButton
 
@@ -17,7 +18,8 @@ fun CalculatorButton(
     ) {
         Text(
             modifier = Modifier,
-            text = text
+            text = text,
+            fontSize = 14.sp // TODO: Adjust fontsize for different screens
         )
     }
 }
