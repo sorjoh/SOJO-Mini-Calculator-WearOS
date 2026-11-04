@@ -9,343 +9,335 @@ import java.math.BigDecimal
 class CalculatorViewModel : ViewModel() {
     var display = mutableStateOf("")
 
-    var calculator: Calculator = Calculator()
+    var c: Calculator = Calculator()
 
     fun onNumberInput(inputKey: String) {
-        if (calculator.debug)
-            Log.d("SOJO Debug:", "Number(before) : button=" + inputKey + ", inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(calculator.currentOperator) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator)
+        // Show values before they are modified for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:", "Number(before) : button=" + inputKey + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
 
-        if (calculator.hasResult == true) { // Calculation has result
+        if (c.hasResult == true) { // Calculation has result
             // Reset all values
-            calculator.resetValues()
+            c.resetValues()
             // Add the first number to inputValue
-            calculator.inputValue = inputKey
+            c.inputValue = inputKey
             // Replace outputValue with the newly and initialized inputValue
-            calculator.outputValue = calculator.inputValue
-        } else if (calculator.hasOperator == true) { // Calculation has operator
+            c.outputValue = c.inputValue
+        } else if (c.hasOperator == true) { // Calculation has operator
             var currentResultValue: String
 
             try {
                 // Get first and second value from the output
-                val splitOutputValue: List<String>? = calculator.outputValue?.trim()
-                    ?.split(calculator.getOperationSign(calculator.currentOperator))
+                val splitOutputValue: List<String>? = c.outputValue?.trim()
+                    ?.split(c.getOperationSign(c.currentOperator))
 
                 // If inputValue is zero then replace inputValue with the number, otherwise add the number
-                calculator.inputValue = if (calculator.inputValue == "0") inputKey else calculator.inputValue + inputKey
+                c.inputValue = if (c.inputValue == "0") inputKey else c.inputValue + inputKey
 
                 // Set current result initially as the first split value from the outputValue
-                currentResultValue = (splitOutputValue?.get(0) ?: calculator.outputValue).toString()
+                currentResultValue = (splitOutputValue?.get(0) ?: c.outputValue).toString()
 
                 // Add minus sign in the beginning if current result value is empty and operator is minus
-                if (calculator.currentOperator === Calculator.Operator.MINUS && currentResultValue.isEmpty()) {
-                    currentResultValue = calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                if (c.currentOperator === Calculator.Operator.MINUS && currentResultValue.isEmpty()) {
+                    currentResultValue = c.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
                 }
             } catch (e: Exception) {
-                if (calculator.debug)
-                    Log.d("SOJO Debug:", e.message + ", outputValue=" + calculator.outputValue)
+                if (c.debug)
+                    Log.d("SOJO Debug:", e.message + ", outputValue=" + c.outputValue)
 
                 // Error fix when splitting outputValue
-                calculator.inputValue += inputKey
-                currentResultValue = calculator.outputValue?.trim().toString()
+                c.inputValue += inputKey
+                currentResultValue = c.outputValue?.trim().toString()
             }
 
             // Replace output value with the temporary current result value together with current operator sign and input value
-            calculator.outputValue = currentResultValue + calculator.getOperationSign(calculator.currentOperator) + calculator.inputValue
+            c.outputValue = currentResultValue + c.getOperationSign(c.currentOperator) + c.inputValue
         } else {
             // Otherwise add the number to input value
-            calculator.inputValue += inputKey
+            c.inputValue += inputKey
             // Replace output value with the new input value
-            calculator.outputValue = calculator.inputValue
+            c.outputValue = c.inputValue
         }
 
         // Equal button has not been pressed
-        calculator.isEqual = false //Bugfix for example 2.3 + 5 = .
+        c.isEqual = false //Bugfix for example 2.3 + 5 = .
 
         // Display the output
-        displayOutput(calculator.outputValue)
+        displayOutput(c.outputValue)
 
-        if (calculator.debug)
-            Log.d("SOJO Debug:", "Number(after) : button=" + inputKey + ", inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(calculator.currentOperator) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator)
+        // Show modified values for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:", "Number(after) : button=" + inputKey + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
     }
 
     fun onDecimalInput(decimal: Char) {
-        if (calculator.debug)
-            Log.d("SOJO Debug:",
-                "Decimal(before) : inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(
-                calculator.currentOperator
-            ) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator
-        )
+        // Show values before they are modified for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:","Decimal(before) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
 
-        if (calculator.hasResult == true) { // Calculation has result
+        if (c.hasResult == true) { // Calculation has result
             // Reset all values
-            calculator.resetValues()
+            c.resetValues()
         } else { // Calculation has no result
             try {
                 // Get first and second value from the output
-                val splitOutputValue: List<String>? = calculator.outputValue?.trim()
-                    ?.split(calculator.getOperationSign(calculator.currentOperator))
+                val splitOutputValue: List<String>? = c.outputValue?.trim()
+                    ?.split(c.getOperationSign(c.currentOperator))
 
-                if (calculator.hasOperator == true) { // Calculation has operator
+                if (c.hasOperator == true) { // Calculation has operator
                     // Set output value to the first split output value plus the current operator sign
-                    calculator.outputValue = splitOutputValue?.get(0) + calculator.getOperationSign(calculator.currentOperator)
+                    c.outputValue = splitOutputValue?.get(0) + c.getOperationSign(c.currentOperator)
                     // Set input value to the second split output value
-                    calculator.inputValue = splitOutputValue?.get(1)
+                    c.inputValue = splitOutputValue?.get(1)
                 } else { // Otherwise if calculation has no operator
                     // If equal has been pressed before this button then replace inputValue with an empty string, otherwise add the first split value
-                    calculator.inputValue = if (calculator.isEqual == true) "" else calculator.outputValue
+                    c.inputValue = if (c.isEqual == true) "" else c.outputValue
 
                     // Set output value to an empty string
-                    calculator.outputValue = ""
+                    c.outputValue = ""
                 }
             } catch (e: Exception) {
-                if (calculator.debug)
-                    Log.d("SOJO Debug:", e.message + ", outputValue=" + calculator.outputValue)
+                if (c.debug)
+                    Log.d("SOJO Debug:", e.message + ", outputValue=" + c.outputValue)
 
                 // Error fix when splitting outputValue
-                if (calculator.hasOperator == false) {
-                    calculator.outputValue = ""
+                if (c.hasOperator == false) {
+                    c.outputValue = ""
                 }
             }
 
             // Check if input value already contains a decimal otherwise add the decimal separator
-            if (calculator.inputValue?.contains(decimal) == false) {
-                calculator.inputValue += decimal
+            if (c.inputValue?.contains(decimal) == false) {
+                c.inputValue += decimal
             }
         }
 
         // Add a zero before the decimal separator if the input value begins with a decimal
-        if (calculator.inputValue?.startsWith(decimal) == true) {
-            calculator.inputValue = "0" + calculator.inputValue
+        if (c.inputValue?.startsWith(decimal) == true) {
+            c.inputValue = "0" + c.inputValue
         }
 
         // Add the decimal and the result of input value to the output value
-        calculator.outputValue += calculator.inputValue
+        c.outputValue += c.inputValue
 
         // Equal button has not been pressed
-        calculator.isEqual = false
+        c.isEqual = false
 
         // Display the output
-        displayOutput(calculator.outputValue)
+        displayOutput(c.outputValue)
 
-        if (calculator.debug)
-            Log.d("SOJO Debug:",
-                "Decimal(after) : inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(
-                calculator.currentOperator
-            ) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator
-        )
+        // Show modified values for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:","Decimal(after) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
     }
 
     fun onOperatorInput(operation: Calculator.Operator) {
-        if (calculator.debug)
-            Log.d("SOJO Debug:",
-                "Operator(before) : button=" + calculator.getOperationSign(operation) + ", inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(
-                calculator.currentOperator
-            ) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator
-        )
+        // Show values before they are modified for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:","Operator(before) : button=" + c.getOperationSign(operation) + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
 
         // Save current operator as previous operator
-        val previousOperator: Calculator.Operator? = calculator.currentOperator
+        val previousOperator: Calculator.Operator? = c.currentOperator
 
         // Variable to flag when no calculation shall be done when error happens, for example 12 * /
         var doNotCalculate = false
 
-        if (calculator.hasOperator == true) { // Calculation has operator
+        if (c.hasOperator == true) { // Calculation has operator
             try {
                 // Get first and second value from the output
-                val splitOutputValue: List<String>? = calculator.outputValue?.trim()
-                    ?.split(calculator.getOperationSign(calculator.currentOperator))
+                val splitOutputValue: List<String>? = c.outputValue?.trim()
+                    ?.split(c.getOperationSign(c.currentOperator))
 
                 // Reset values
-                calculator.resetValues()
+                c.resetValues()
 
                 // Set output value to the first split output value
-                calculator.outputValue = splitOutputValue?.get(0)
+                c.outputValue = splitOutputValue?.get(0)
                 // Set input value to the second split output value
-                calculator.inputValue = splitOutputValue?.get(1)
+                c.inputValue = splitOutputValue?.get(1)
 
                 // Add minus sign in the beginning if current output value is empty and previous operator is minus
-                if (previousOperator == Calculator.Operator.MINUS && calculator.outputValue?.isEmpty() == true) {
+                if (previousOperator == Calculator.Operator.MINUS && c.outputValue?.isEmpty() == true) {
                     // Set output value to the second split output value
-                    calculator.outputValue = calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                    c.outputValue = c.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
                     // Set input value to the third split output value
-                    calculator.inputValue = splitOutputValue?.get(2)
+                    c.inputValue = splitOutputValue?.get(2)
                 }
             } catch (e: Exception) {
-                if (calculator.debug)
-                    Log.d("SOJO Debug:", e.message + ", outputValue=" + calculator.outputValue)
+                if (c.debug)
+                    Log.d("SOJO Debug:", e.message + ", outputValue=" + c.outputValue)
 
                 // Set flag to not do any calculation when the error happens, for example 12 * /
                 doNotCalculate = true
 
                 // Set input value to zero
-                calculator.inputValue = "0"
+                c.inputValue = "0"
 
                 // Replace the decimal from localities with a dot for the calculation
-                calculator.resultValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+                c.resultValue = BigDecimal(c.outputValue?.replace(c.decimalSeparator, '.'))
             }
 
             // Convert and replace the decimal from localities with a dot for the calculation
-            calculator.firstValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+            c.firstValue = BigDecimal(c.outputValue?.replace(c.decimalSeparator, '.'))
 
             // Fix for example 12 * %
             if (!doNotCalculate) {
                 try {
                     // Convert and replace the decimal from localities with a dot for the calculation
-                    calculator.secondValue = BigDecimal(calculator.inputValue?.replace(calculator.decimalSeparator, '.'))
+                    c.secondValue = BigDecimal(c.inputValue?.replace(c.decimalSeparator, '.'))
 
                     // Calculate the result
-                    calculator.resultValue = calculator.calculate(calculator.firstValue, calculator.secondValue, previousOperator)
+                    c.resultValue = c.calculate(c.firstValue, c.secondValue, previousOperator)
                 } catch (e: Exception) {
-                    if (calculator.debug) {
+                    if (c.debug) {
                        Log.d("SOJO Debug:", e.message.toString())
                     }
 
                     // Convert and replace the decimal from localities with a dot for the calculation
-                    calculator.resultValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+                    c.resultValue = BigDecimal(c.outputValue?.replace(c.decimalSeparator, '.'))
                 }
             }
 
             // Set current operator
-            calculator.currentOperator = operation
+            c.currentOperator = operation
 
             // Set input value to an empty string
-            calculator.inputValue = ""
+            c.inputValue = ""
 
             // Replace output value with the result and local decimal separator, plus the current operator sign
-            calculator.outputValue = calculator.resultValue.toString()
-                .replace('.', calculator.decimalSeparator) + calculator.getOperationSign(calculator.currentOperator)
-        } else if (calculator.outputValue?.isEmpty() == true) { // Output value is empty
+            c.outputValue = c.resultValue.toString()
+                .replace('.', c.decimalSeparator) + c.getOperationSign(c.currentOperator)
+        } else if (c.outputValue?.isEmpty() == true) { // Output value is empty
             // Reset values
-            calculator.resetValues()
+            c.resetValues()
 
             // Set current operator
-            calculator.currentOperator = operation
+            c.currentOperator = operation
 
             // Set input value to zero
-            calculator.inputValue = "0"
+            c.inputValue = "0"
             // Replace output value with the input value plus the current operator sign
-            calculator.outputValue = calculator.inputValue + calculator.getOperationSign(calculator.currentOperator)
+            c.outputValue = c.inputValue + c.getOperationSign(c.currentOperator)
         } else { // Calculation has no operator and output value is not empty
             // Set current operator
-            calculator.currentOperator = operation
+            c.currentOperator = operation
 
             // Set input value to an empty string
-            calculator.inputValue = ""
+            c.inputValue = ""
 
             // Add the current operator sign to output value
-            calculator.outputValue += calculator.getOperationSign(calculator.currentOperator)
+            c.outputValue += c.getOperationSign(c.currentOperator)
         }
 
         // Tell the app that an operator is present
-        calculator.hasOperator = true
+        c.hasOperator = true
 
         // Equal button has not been pressed
-        calculator.isEqual = false
+        c.isEqual = false
 
         // Display the output
-        displayOutput(calculator.outputValue)
+        displayOutput(c.outputValue)
 
-        if (calculator.debug)
-            Log.d("SOJO Debug:",
-                "Operator(after) : button=" + calculator.getOperationSign(operation) + ", resultValue=" + calculator.resultValue + ", firstValue=" + calculator.firstValue + ", secondValue=" + calculator.secondValue + ", inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(
-                calculator.currentOperator
-            ) + ", hasResult=" + calculator.hasResult + ", hasOperator=" + calculator.hasOperator
-        )
+        // Show modified values for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:","Operator(after) : button=" + c.getOperationSign(operation) + ", resultValue=" + c.resultValue + ", firstValue=" + c.firstValue + ", secondValue=" + c.secondValue + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator            ) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
     }
 
     fun onEqual() {
-        if (calculator.debug)
-            Log.d("SOJO Debug:",
-            "Equal(before) : inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(
-                calculator.currentOperator
-            ) + ", hasResult=" + calculator.hasResult
-        )
+        // Show values before they are modified for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:","Equal(before) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult)
 
         // Get first and second value from the output
-        val splitOutputValue: List<String>? = calculator.outputValue?.trim()
-            ?.split(calculator.getOperationSign(calculator.currentOperator))
+        val splitOutputValue: List<String>? = c.outputValue?.trim()
+            ?.split(c.getOperationSign(c.currentOperator))
 
         // Set output value to the first split output value
-        calculator.outputValue = splitOutputValue?.get(0)
+        c.outputValue = splitOutputValue?.get(0)
 
         try {
             // Add minus sign in the beginning if current output value is empty and current operator is minus
-            if (calculator.currentOperator === Calculator.Operator.MINUS && calculator.outputValue?.isEmpty() == true) {
+            if (c.currentOperator === Calculator.Operator.MINUS && c.outputValue?.isEmpty() == true) {
                 // Set output value to the second split output value
-                calculator.outputValue = calculator.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                c.outputValue = c.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
                 // Set input value to the third split output value
-                calculator.inputValue = splitOutputValue?.get(2)
+                c.inputValue = splitOutputValue?.get(2)
             } else { // Otherwise set input value to the second split output value
-                calculator.inputValue = splitOutputValue?.get(1)
+                c.inputValue = splitOutputValue?.get(1)
             }
         } catch (e: Exception) {
-            if (calculator.debug) {
+            if (c.debug) {
                 Log.d("SOJO Debug:",e.message.toString())
             }
 
             // Reset all values if Equal been pressed twice, otherwise reset all values except for the output value
-            val tmpOutputValue: String? = if (calculator.isEqual == true) "" else calculator.outputValue // Save outputValue if needed
+            val tmpOutputValue: String? = if (c.isEqual == true) "" else c.outputValue // Save outputValue if needed
 
             // Reset values
-            calculator.resetValues()
+            c.resetValues()
 
             // Restore the output value if needed
-            calculator.outputValue = tmpOutputValue
+            c.outputValue = tmpOutputValue
         }
 
-        if (calculator.hasOperator == true) { // Calculation has operator
+        if (c.hasOperator == true) { // Calculation has operator
             // Set firstValue as BigDecimal value of outputValue plus convert and replace the decimal from localities with a dot for the calculation
-            calculator.firstValue = BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+            c.firstValue = BigDecimal(c.outputValue?.replace(c.decimalSeparator, '.'))
 
             // Set secondValue if it is not empty as BigDecimal value of inputValue plus convert and replace the decimal from localities with a dot for the calculation
-            calculator.resultValue = if (calculator.inputValue?.isEmpty() == false) {
-                calculator.secondValue = BigDecimal(calculator.inputValue?.replace(calculator.decimalSeparator, '.'))
+            c.resultValue = if (c.inputValue?.isEmpty() == false) {
+                c.secondValue = BigDecimal(c.inputValue?.replace(c.decimalSeparator, '.'))
 
                 // Calculate the result
-                calculator.calculate(calculator.firstValue, calculator.secondValue, calculator.currentOperator)
+                c.calculate(c.firstValue, c.secondValue, c.currentOperator)
             } else {
-                calculator.firstValue
+                c.firstValue
             }
         } else {
             // Set resultValue as BigDecimal value of outputValue plus convert and replace the decimal from localities with a dot for the calculation
-            calculator.resultValue = if (calculator.outputValue?.isEmpty() == false)
-                BigDecimal(calculator.outputValue?.replace(calculator.decimalSeparator, '.'))
+            c.resultValue = if (c.outputValue?.isEmpty() == false)
+                BigDecimal(c.outputValue?.replace(c.decimalSeparator, '.'))
             else
                 BigDecimal("0")
         }
 
         // Set input value to an empty string
-        calculator.inputValue = ""
+        c.inputValue = ""
 
         // Convert result value to string plus convert and replace the decimal from localities with a dot for the calculation
-        calculator.outputValue = calculator.resultValue.toString().replace('.', calculator.decimalSeparator)
+        c.outputValue = c.resultValue.toString().replace('.', c.decimalSeparator)
 
         // Set current operator to none
-        calculator.currentOperator = Calculator.Operator.NONE
+        c.currentOperator = Calculator.Operator.NONE
 
         // No operator is used
-        calculator.hasOperator = false
+        c.hasOperator = false
 
         // Set a flag that no result has been calculated, even if it has been done
-        calculator.hasResult = false
+        c.hasResult = false
 
         // Tell the app that equal has been pressed
-        calculator.isEqual = true
+        c.isEqual = true
 
         // Display the output
-        displayOutput(calculator.outputValue)
+        displayOutput(c.outputValue)
 
-        if (calculator.debug)
-            Log.d("SOJO Debug:",
-            "Equal(after) : inputValue=" + calculator.inputValue + ", outputValue=" + calculator.outputValue + ", Display=" + display.value + ", currentOperation=" + calculator.getOperationSign(
-                calculator.currentOperator
-            ) + ", hasResult=" + calculator.hasResult
-        )
+        // Show modified values for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:","Equal(after) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult)
     }
 
     // ========= DISPLAY OUTPUT =========
     private fun displayOutput(output: String? = "0") {
+        // Show values before they are modified for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:", "DisplayOutput(before) : output=$output, display=${display.value}")
+
         // Display the output
         display.value = output.toString()
+
+        // Show modified values for debugging in Logcat
+        if (c.debug)
+            Log.d("SOJO Debug:", "DisplayOutput(after) : output=$output, display=${display.value}")
     }
 }

@@ -26,8 +26,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Check if it is a rounded wearable
         val isScreenRound = resources.configuration.isScreenRound
 
+        // Get the width and height of the wearable
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 

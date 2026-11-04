@@ -34,6 +34,7 @@ fun CalculatorButton(
     shapeSize: Dp = 8.dp,
     onClick: () -> Unit,
     ) {
+        // Button border
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -43,6 +44,7 @@ fun CalculatorButton(
                 .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
+            // Button text
             Text(
                 modifier = Modifier,
                 text = text,

@@ -35,15 +35,16 @@ fun CalculatorScreen(
     viewModel: CalculatorViewModel = CalculatorViewModel() )
 {
     // Include the calculator class in the viewmodel
-    viewModel.calculator = calculator
+    viewModel.c = calculator
 
     // Needed for the display output
     LaunchedEffect(key1 = viewModel.display.value) {
        viewModel.display.value.let { Log.d("SOJO Debug:", it) }
     }
 
+    // Show values for debugging in Logcat
     if (calculator.debug)
-        Log.d("SOJO Debug:", "isScreenRound=$isScreenRound, width=$width, height=$height")
+        Log.d("SOJO Debug:", "UI : isScreenRound=$isScreenRound, width=$width, height=$height")
 
     // Adjust the padding based on the type and size of wearable
     //      Square = 360x360
@@ -60,10 +61,11 @@ fun CalculatorScreen(
         else -> if (isScreenRound) 28.dp else 0.dp
     }
 
+    // Padding and margin between text in the display and for buttons
     val displayTextPadding = 8.dp
     val spacer = 5.dp
 
-    // Display background and text colors
+    // Display background, text colors and font size
     val displayBackgroundColor = Color(Color(0xFFC1D797).toArgb())
     val displayTextColor = Color(Color(0xFFFDFFFE).toArgb())
     val displayTextFontSize = when (width) {
@@ -71,7 +73,7 @@ fun CalculatorScreen(
         else -> 24.sp
     }
 
-    // Number background and text colors
+    // Number background, text colors and font size
     val numberBackgroundColor = Color(Color(0xFF3A3D46).toArgb())
     val numberTextColor = Color(Color(0xFFFDFFFE).toArgb())
     val numberTextFontSize = when (width) {
@@ -79,7 +81,7 @@ fun CalculatorScreen(
         else -> 24.sp
     }
 
-    // Function background and text colors
+    // Function background, text colors and font size
     val functionBackgroundColor = Color(Color(0xFFBABEC1).toArgb())
     val functionTextColor = Color(Color(0xFFFDFFFE).toArgb())
     val functionTextFontSize = when (width) {
@@ -87,8 +89,10 @@ fun CalculatorScreen(
         else -> 20.sp
     }
 
+    // Size of the rounded corner for buttons
     val roundedCornerSize = 8.dp
 
+    // Main
     Column(
         modifier = if (isScreenRound) {
             Modifier.padding(start = padding, end = padding, bottom = padding, top = padding)
@@ -108,9 +112,10 @@ fun CalculatorScreen(
         ) {
             Spacer(modifier = Modifier.height(spacer).width(spacer))
 
-            viewModel.calculator.outputValue?.let {
+            viewModel.c.outputValue?.let {
                 val output = it.ifEmpty { "0" }
 
+                // Display border
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -119,6 +124,7 @@ fun CalculatorScreen(
                         .background(displayBackgroundColor),
                     contentAlignment = Alignment.CenterEnd
                 ) {
+                    // Display text
                     Text(
                         modifier = Modifier
                             .padding(end = displayTextPadding),
@@ -138,6 +144,7 @@ fun CalculatorScreen(
         }
         Spacer(modifier = Modifier.height(spacer * 1.2f))
 
+        /* ======== BUTTONS ======== */
         // 7, 8, 9, *
         Row(
             modifier = Modifier.weight(rowHeight)
