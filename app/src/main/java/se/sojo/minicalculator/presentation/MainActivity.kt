@@ -42,13 +42,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun WearApp(isScreenRound: Boolean, width: Int, height: Int) {
-
-    // Background and text colors
-    val CALCULATOR_BACKGROUND_COLOR = Color(Color(0xFF585A67).toArgb())
+    // Calculator background color
+    val backgroundColor = Color(Color(0xFF585A67).toArgb())
 
     SOJOMiniCalculatorTheme {
         AppScaffold(
-            modifier = Modifier.background(CALCULATOR_BACKGROUND_COLOR),
+            modifier = Modifier.background(backgroundColor),
             timeText = { } // Hide the clock
         ) {
             Row(
@@ -73,7 +72,7 @@ fun WearApp(isScreenRound: Boolean, width: Int, height: Int) {
                 }
 
                 // Initialize UI
-                CalculatorScreen(calculator, isScreenRound, width, height, CALCULATOR_BACKGROUND_COLOR)
+                CalculatorScreen(calculator, isScreenRound, width, height, backgroundColor)
             }
         }
     }

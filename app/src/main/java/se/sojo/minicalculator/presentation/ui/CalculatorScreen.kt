@@ -2,13 +2,11 @@ package se.sojo.minicalculator.presentation.ui
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -20,15 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.TextButton
-import androidx.wear.compose.material3.TextButtonDefaults
 import se.sojo.minicalculator.presentation.Calculator
 
 @Composable
@@ -69,31 +63,31 @@ fun CalculatorScreen(
     val displayTextPadding = 8.dp
     val spacer = 5.dp
 
-    // Background and text colors
-    val CALCULATOR_BACKGROUND_COLOR = Color(Color(0xFF585A67).toArgb())
-
-    val DISPLAY_BACKGROUND_COLOR = Color(Color(0xFFC1D797).toArgb())
-    val DISPLAY_TEXT_COLOR = Color(Color(0xFFFDFFFE).toArgb())
-    val DISPLAY_TEXT_FONT_SIZE = when (width) {
+    // Display background and text colors
+    val displayBackgroundColor = Color(Color(0xFFC1D797).toArgb())
+    val displayTextColor = Color(Color(0xFFFDFFFE).toArgb())
+    val displayTextFontSize = when (width) {
         in 0..401 -> 22.sp
         else -> 24.sp
     }
 
-    val NUMBER_BACKGROUND_COLOR = Color(Color(0xFF3A3D46).toArgb())
-    val NUMBER_TEXT_COLOR = Color(Color(0xFFFDFFFE).toArgb())
-    val NUMBER_TEXT_FONT_SIZE = when (width) {
+    // Number background and text colors
+    val numberBackgroundColor = Color(Color(0xFF3A3D46).toArgb())
+    val numberTextColor = Color(Color(0xFFFDFFFE).toArgb())
+    val numberTextFontSize = when (width) {
         in 0..401 -> 20.sp
         else -> 24.sp
     }
 
-    val FUNCTION_BACKGROUND_COLOR = Color(Color(0xFFBABEC1).toArgb())
-    val FUNCTION_TEXT_COLOR = Color(Color(0xFFFDFFFE).toArgb())
-    val FUNCTION_TEXT_FONT_SIZE = when (width) {
+    // Function background and text colors
+    val functionBackgroundColor = Color(Color(0xFFBABEC1).toArgb())
+    val functionTextColor = Color(Color(0xFFFDFFFE).toArgb())
+    val functionTextFontSize = when (width) {
         in 0..401 -> 16.sp
         else -> 20.sp
     }
 
-    val ROUNDED_CORNER_SHAPE_SIZE = 8.dp
+    val roundedCornerSize = 8.dp
 
     Column(
         modifier = if (isScreenRound) {
@@ -121,58 +115,25 @@ fun CalculatorScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = spacer * 1.2f)
-                        .clip(RoundedCornerShape(ROUNDED_CORNER_SHAPE_SIZE))
-                        .background(DISPLAY_BACKGROUND_COLOR),
+                        .clip(RoundedCornerShape(roundedCornerSize))
+                        .background(displayBackgroundColor),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Text(
                         modifier = Modifier
                             .padding(end = displayTextPadding),
-                        // Adjust the output according to max input length
+                        // Adjust the output according to max input length and add three dots if needed
                         text = if (output.length > calculator.maxInputLength)
-                            "${output.substring(0, calculator.maxInputLength)}...${it.substring(it.length - 1)}"
+                            "${output.substring(0, calculator.maxInputLength - 2)}\u2026${it.substring(it.length - 3)}"
                         else
                             output,
-                        color = DISPLAY_TEXT_COLOR,
+                        color = displayTextColor,
                         textAlign = TextAlign.End,
-                        fontSize = DISPLAY_TEXT_FONT_SIZE
+                        fontSize = displayTextFontSize
                     )
 
                     Spacer(modifier = Modifier.width(spacer))
                 }
-
-                /*TextButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = spacer * 1.2f)
-                        .align(alignment = Alignment.CenterVertically),
-                    shapes = TextButtonDefaults.shapes(shape = RoundedCornerShape(ROUNDED_CORNER_SHAPE_SIZE)),
-                    colors = TextButtonDefaults.textButtonColors(
-                        contentColor = DISPLAY_BACKGROUND_COLOR,
-                        containerColor = DISPLAY_BACKGROUND_COLOR
-                    ),
-                    border = ButtonDefaults.outlinedButtonBorder(
-                        enabled = true,
-                        borderColor = DISPLAY_BACKGROUND_COLOR
-                    ),
-                    onClick = {  }
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = displayTextPadding),
-                    // Adjust the output according to max input length
-                    text = if (output.length > calculator.maxInputLength)
-                        "${output.substring(0, calculator.maxInputLength)}...${it.substring(it.length - 1)}"
-                    else
-                        output,
-                    fontSize = DISPLAY_TEXT_FONT_SIZE,
-                    color = DISPLAY_TEXT_COLOR,
-                    textAlign = TextAlign.End
-                    )
-
-                    Spacer(modifier = Modifier.width(spacer))
-                }*/
             }
         }
         Spacer(modifier = Modifier.height(spacer * 1.2f))
@@ -185,45 +146,45 @@ fun CalculatorScreen(
 
             CalculatorButton(
                 text = "7",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("7") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "8",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("8") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "9",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("9") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.MULTIPLY),
-                fontSize = FUNCTION_TEXT_FONT_SIZE,
-                backgroundColor = FUNCTION_BACKGROUND_COLOR,
-                textColor = FUNCTION_TEXT_COLOR,
+                fontSize = functionTextFontSize,
+                backgroundColor = functionBackgroundColor,
+                textColor = functionTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.MULTIPLY) }
             )
             Spacer(modifier = Modifier.width(spacer))
@@ -238,45 +199,45 @@ fun CalculatorScreen(
 
             CalculatorButton(
                 text = "4",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("4") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "5",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("5") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "6",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("6") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.DIVIDE),
-                fontSize = FUNCTION_TEXT_FONT_SIZE,
-                backgroundColor = FUNCTION_BACKGROUND_COLOR,
-                textColor = FUNCTION_TEXT_COLOR,
+                fontSize = functionTextFontSize,
+                backgroundColor = functionBackgroundColor,
+                textColor = functionTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.DIVIDE) }
             )
             Spacer(modifier = Modifier.width(spacer))
@@ -291,45 +252,45 @@ fun CalculatorScreen(
 
             CalculatorButton(
                 text = "1",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("1") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "2",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("2") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "3",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("3") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.PLUS),
-                fontSize = FUNCTION_TEXT_FONT_SIZE,
-                backgroundColor = FUNCTION_BACKGROUND_COLOR,
-                textColor = FUNCTION_TEXT_COLOR,
+                fontSize = functionTextFontSize,
+                backgroundColor = functionBackgroundColor,
+                textColor = functionTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.PLUS) }
             )
             Spacer(modifier = Modifier.width(spacer))
@@ -344,47 +305,47 @@ fun CalculatorScreen(
 
             CalculatorButton(
                 text = "0",
-                fontSize = NUMBER_TEXT_FONT_SIZE,
-                backgroundColor = NUMBER_BACKGROUND_COLOR,
-                textColor = NUMBER_TEXT_COLOR,
+                fontSize = numberTextFontSize,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onNumberInput("0") }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = calculator.decimalSeparator.toString(),
-                fontSize = FUNCTION_TEXT_FONT_SIZE,
-                backgroundColor = FUNCTION_BACKGROUND_COLOR,
-                textColor = FUNCTION_TEXT_COLOR,
+                fontSize = functionTextFontSize,
+                backgroundColor = functionBackgroundColor,
+                textColor = functionTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onDecimalInput(decimal = calculator.decimalSeparator) }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = "=",
-                fontSize = FUNCTION_TEXT_FONT_SIZE,
-                backgroundColor = FUNCTION_BACKGROUND_COLOR,
-                textColor = FUNCTION_TEXT_COLOR,
+                fontSize = functionTextFontSize,
+                backgroundColor = functionBackgroundColor,
+                textColor = functionTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onEqual() }
             )
             Spacer(modifier = Modifier.width(spacer))
 
             CalculatorButton(
                 text = calculator.getOperationSign(operator = Calculator.Operator.MINUS),
-                fontSize = FUNCTION_TEXT_FONT_SIZE,
-                backgroundColor = FUNCTION_BACKGROUND_COLOR,
-                textColor = FUNCTION_TEXT_COLOR,
+                fontSize = functionTextFontSize,
+                backgroundColor = functionBackgroundColor,
+                textColor = functionTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
-                shapeSize = ROUNDED_CORNER_SHAPE_SIZE,
+                shapeSize = roundedCornerSize,
                 onClick = { viewModel.onOperatorInput(operation = Calculator.Operator.MINUS) }
             )
             Spacer(modifier = Modifier.width(spacer))
