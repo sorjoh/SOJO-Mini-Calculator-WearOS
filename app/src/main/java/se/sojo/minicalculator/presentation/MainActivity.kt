@@ -1,38 +1,54 @@
 package se.sojo.minicalculator.presentation
 
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.wear.compose.material3.AppScaffold
-import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
-import androidx.wear.compose.ui.tooling.preview.WearPreviewFontScales
 import se.sojo.minicalculator.presentation.theme.SOJOMiniCalculatorTheme
 import se.sojo.minicalculator.presentation.ui.CalculatorScreen
 import java.text.DecimalFormatSymbols
 
 // Use debugging if needed
-const val DEBUG: Boolean = false
+const val DEBUG: Boolean = true
 
 // Max length of the display numbers
-const val MAX_INPUT_LENGTH: Int = 13
+const val MAX_INPUT_LENGTH: Int = 10
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val isScreenRound = resources.configuration.isScreenRound
+
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        val width = displayMetrics.widthPixels
+        val height = displayMetrics.heightPixels
+
         setContent {
-            WearApp()
+            WearApp(isScreenRound, width, height)
         }
     }
 }
 
 @Composable
-fun WearApp() {
+fun WearApp(isScreenRound: Boolean, width: Int, height: Int) {
+
+    // Background and text colors
+    val CALCULATOR_BACKGROUND_COLOR = Color(Color(0xFF585A67).toArgb())
+
     SOJOMiniCalculatorTheme {
         AppScaffold(
+            modifier = Modifier.background(CALCULATOR_BACKGROUND_COLOR),
             timeText = { } // Hide the clock
         ) {
             Row(
@@ -46,86 +62,19 @@ fun WearApp() {
                 val calculator = Calculator(decimalSeparator, MAX_INPUT_LENGTH, DEBUG)
                 calculator.resetValues()
 
-                // Initialize UI
-                CalculatorScreen(calculator)
-            }
-        }
-    }
-}
-
-/*
-@Composable
-fun WearApp() {
-    SOJOMiniCalculatorTheme {
-        AppScaffold {
-            val listState = rememberTransformingLazyColumnState()
-            val transformationSpec = rememberTransformationSpec()
-            ScreenScaffold(
-                scrollState = listState,
-                edgeButton = {
-                    EdgeButton(
-                        onClick = { /*TODO*/ },
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            ),
-                    ) {
-                        Text("More")
-                    }
-                },
-            ) { contentPadding -> // ScreenScaffold provides default padding; adjust as needed
-                TransformingLazyColumn(contentPadding = contentPadding, state = listState) {
-                    item {
-                        ListHeader(
-                            modifier =
-                                Modifier.fillMaxWidth().transformedHeight(this, transformationSpec),
-                            transformation = SurfaceTransformation(transformationSpec),
-                        ) {
-                            Text(text = stringResource(R.string.hello_world, greetingName))
-                        }
-                    }
-                    item {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.fillMaxWidth()
-                                .transformedHeight(this, transformationSpec),
-                            transformation = SurfaceTransformation(transformationSpec),
-                        ) {
-                            Text("Button A")
-                        }
-                    }
-                    item {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.fillMaxWidth()
-                                .transformedHeight(this, transformationSpec),
-                            transformation = SurfaceTransformation(transformationSpec),
-                        ) {
-                            Text("Button B")
-                        }
-                    }
-                    item {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.fillMaxWidth()
-                                .transformedHeight(this, transformationSpec),
-                            transformation = SurfaceTransformation(transformationSpec),
-                        ) {
-                            Text("Button C")
-                        }
-                    }
-
+                // Adjust the maximum input length for the display based on the type and size of wearable
+                //      Square = 360x360
+                //      Small Round = 384x384
+                //      Rectangular = 402x476
+                //      Large Round = 454x454
+                calculator.maxInputLength += when (width) {
+                    in 0 .. 401 -> if (isScreenRound) -3 else 0
+                    else -> if (isScreenRound) -2 else 0
                 }
+
+                // Initialize UI
+                CalculatorScreen(calculator, isScreenRound, width, height, CALCULATOR_BACKGROUND_COLOR)
             }
         }
     }
-}
-*/
-
-@WearPreviewDevices
-@WearPreviewFontScales
-@Composable
-fun DefaultPreview() {
-    WearApp()
 }
