@@ -186,16 +186,13 @@ class CalculatorViewModel : ViewModel() {
                 // Add minus sign in the beginning if current output value is empty and previous operator is minus
                 if (previousOperator == Calculator.Operator.MINUS && c.outputValue?.isEmpty() == true) {
                     // Set output value to the second split output value
-                    c.outputValue =
-                        "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
+                    c.outputValue = "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
                     // Set input value to the third split output value
                     c.inputValue = splitOutputValue?.get(2)
                 }
             } catch (e: Exception) {
                 if (c.debug)
-                    Log.d("SOJO Debug:",
-                        "CalculatorViewModel -> onOperatorInput(error) : ${e.message}, outputValue=${c.outputValue}"
-                    )
+                    Log.d("SOJO Debug:","CalculatorViewModel -> onOperatorInput(error) : ${e.message}, outputValue=${c.outputValue}")
 
                 // Set flag to not do any calculation when the error happens, for example 12 * /
                 doNotCalculate = true
@@ -301,8 +298,7 @@ class CalculatorViewModel : ViewModel() {
             // Add minus sign in the beginning if current output value is empty and current operator is minus
             if (c.currentOperator === Calculator.Operator.MINUS && c.outputValue?.isEmpty() == true) {
                 // Set output value to the second split output value
-                c.outputValue =
-                    "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
+                c.outputValue = "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
                 // Set input value to the third split output value
                 c.inputValue = splitOutputValue?.get(2)
             } else { // Otherwise set input value to the second split output value
