@@ -1,4 +1,4 @@
-# SOJO Mini Calculator (Java)
+# SOJO Mini Calculator (WearOS)
 
 This project is a simple mini calculator with basic mathematical operations developed in Kotlin for wearable devices using android.
 
