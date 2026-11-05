@@ -11,10 +11,15 @@ class CalculatorViewModel : ViewModel() {
 
     var c: Calculator = Calculator()
 
+    // ========= NUMBER INPUT =========
     fun onNumberInput(inputKey: String) {
         // Show values before they are modified for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:", "Number(before) : button=" + inputKey + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onNumberInput(before) : button=$inputKey, inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(c.currentOperator)
+                }, hasResult=${c.hasResult}, hasOperator=${c.hasOperator}"
+            )
 
         if (c.hasResult == true) { // Calculation has result
             // Reset all values
@@ -32,18 +37,18 @@ class CalculatorViewModel : ViewModel() {
                     ?.split(c.getOperationSign(c.currentOperator))
 
                 // If inputValue is zero then replace inputValue with the number, otherwise add the number
-                c.inputValue = if (c.inputValue == "0") inputKey else c.inputValue + inputKey
+                c.inputValue = if (c.inputValue == "0") inputKey else "${c.inputValue}$inputKey"
 
                 // Set current result initially as the first split value from the outputValue
                 currentResultValue = (splitOutputValue?.get(0) ?: c.outputValue).toString()
 
                 // Add minus sign in the beginning if current result value is empty and operator is minus
                 if (c.currentOperator === Calculator.Operator.MINUS && currentResultValue.isEmpty()) {
-                    currentResultValue = c.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                    currentResultValue = "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
                 }
             } catch (e: Exception) {
                 if (c.debug)
-                    Log.d("SOJO Debug:", e.message + ", outputValue=" + c.outputValue)
+                    Log.d("SOJO Debug:","CalculatorViewModel -> onNumberInput(error) : ${e.message}, outputValue=${c.outputValue}")
 
                 // Error fix when splitting outputValue
                 c.inputValue += inputKey
@@ -51,7 +56,7 @@ class CalculatorViewModel : ViewModel() {
             }
 
             // Replace output value with the temporary current result value together with current operator sign and input value
-            c.outputValue = currentResultValue + c.getOperationSign(c.currentOperator) + c.inputValue
+            c.outputValue = "$currentResultValue${c.getOperationSign(c.currentOperator)}${c.inputValue}"
         } else {
             // Otherwise add the number to input value
             c.inputValue += inputKey
@@ -67,13 +72,22 @@ class CalculatorViewModel : ViewModel() {
 
         // Show modified values for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:", "Number(after) : button=" + inputKey + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onNumberInput(after) : button=$inputKey, inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(c.currentOperator)
+                }, hasResult=${c.hasResult}, hasOperator=${c.hasOperator}"
+            )
     }
 
+    // ========= DECIMAL INPUT =========
     fun onDecimalInput(decimal: Char) {
         // Show values before they are modified for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:","Decimal(before) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onDecimalInput(before) : inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(c.currentOperator)
+                }, hasResult=${c.hasResult}, hasOperator=${c.hasOperator}"
+            )
 
         if (c.hasResult == true) { // Calculation has result
             // Reset all values
@@ -86,7 +100,7 @@ class CalculatorViewModel : ViewModel() {
 
                 if (c.hasOperator == true) { // Calculation has operator
                     // Set output value to the first split output value plus the current operator sign
-                    c.outputValue = splitOutputValue?.get(0) + c.getOperationSign(c.currentOperator)
+                    c.outputValue ="${splitOutputValue?.get(0)}${c.getOperationSign(c.currentOperator)}"
                     // Set input value to the second split output value
                     c.inputValue = splitOutputValue?.get(1)
                 } else { // Otherwise if calculation has no operator
@@ -98,7 +112,7 @@ class CalculatorViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 if (c.debug)
-                    Log.d("SOJO Debug:", e.message + ", outputValue=" + c.outputValue)
+                    Log.d("SOJO Debug:","CalculatorViewModel -> onDecimalInput(error) : ${e.message}, outputValue=${c.outputValue}")
 
                 // Error fix when splitting outputValue
                 if (c.hasOperator == false) {
@@ -114,7 +128,7 @@ class CalculatorViewModel : ViewModel() {
 
         // Add a zero before the decimal separator if the input value begins with a decimal
         if (c.inputValue?.startsWith(decimal) == true) {
-            c.inputValue = "0" + c.inputValue
+            c.inputValue = "0${c.inputValue}"
         }
 
         // Add the decimal and the result of input value to the output value
@@ -128,13 +142,26 @@ class CalculatorViewModel : ViewModel() {
 
         // Show modified values for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:","Decimal(after) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onDecimalInput(after) : inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(c.currentOperator)
+                }, hasResult=${c.hasResult}, hasOperator=${c.hasOperator}"
+            )
     }
 
+    // ========= OPERATOR INPUT =========
     fun onOperatorInput(operation: Calculator.Operator) {
         // Show values before they are modified for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:","Operator(before) : button=" + c.getOperationSign(operation) + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onOperatorInput(before) : button=${
+                    c.getOperationSign(operation)
+                }, inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(
+                        c.currentOperator
+                    )
+                }, hasResult=${c.hasResult}, hasOperator=${c.hasOperator}"
+            )
 
         // Save current operator as previous operator
         val previousOperator: Calculator.Operator? = c.currentOperator
@@ -159,13 +186,16 @@ class CalculatorViewModel : ViewModel() {
                 // Add minus sign in the beginning if current output value is empty and previous operator is minus
                 if (previousOperator == Calculator.Operator.MINUS && c.outputValue?.isEmpty() == true) {
                     // Set output value to the second split output value
-                    c.outputValue = c.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                    c.outputValue =
+                        "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
                     // Set input value to the third split output value
                     c.inputValue = splitOutputValue?.get(2)
                 }
             } catch (e: Exception) {
                 if (c.debug)
-                    Log.d("SOJO Debug:", e.message + ", outputValue=" + c.outputValue)
+                    Log.d("SOJO Debug:",
+                        "CalculatorViewModel -> onOperatorInput(error) : ${e.message}, outputValue=${c.outputValue}"
+                    )
 
                 // Set flag to not do any calculation when the error happens, for example 12 * /
                 doNotCalculate = true
@@ -189,9 +219,8 @@ class CalculatorViewModel : ViewModel() {
                     // Calculate the result
                     c.resultValue = c.calculate(c.firstValue, c.secondValue, previousOperator)
                 } catch (e: Exception) {
-                    if (c.debug) {
-                       Log.d("SOJO Debug:", e.message.toString())
-                    }
+                    if (c.debug)
+                       Log.d("SOJO Debug:","CalculatorViewModel -> onOperatorInput(error)${e.message}")
 
                     // Convert and replace the decimal from localities with a dot for the calculation
                     c.resultValue = BigDecimal(c.outputValue?.replace(c.decimalSeparator, '.'))
@@ -217,7 +246,7 @@ class CalculatorViewModel : ViewModel() {
             // Set input value to zero
             c.inputValue = "0"
             // Replace output value with the input value plus the current operator sign
-            c.outputValue = c.inputValue + c.getOperationSign(c.currentOperator)
+            c.outputValue = "${c.inputValue}${c.getOperationSign(c.currentOperator)}"
         } else { // Calculation has no operator and output value is not empty
             // Set current operator
             c.currentOperator = operation
@@ -240,13 +269,26 @@ class CalculatorViewModel : ViewModel() {
 
         // Show modified values for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:","Operator(after) : button=" + c.getOperationSign(operation) + ", resultValue=" + c.resultValue + ", firstValue=" + c.firstValue + ", secondValue=" + c.secondValue + ", inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator            ) + ", hasResult=" + c.hasResult + ", hasOperator=" + c.hasOperator)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onOperatorInput(after) -> button=${
+                    c.getOperationSign(operation)
+                }, resultValue=${c.resultValue}, firstValue=${c.firstValue}, secondValue=${c.secondValue}, inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(
+                        c.currentOperator
+                    )
+                }, hasResult=${c.hasResult}, hasOperator=${c.hasOperator}"
+            )
     }
 
+    // ========= EQUAL =========
     fun onEqual() {
         // Show values before they are modified for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:","Equal(before) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onEqual(before) : inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(c.currentOperator)
+                }, hasResult=${c.hasResult}"
+            )
 
         // Get first and second value from the output
         val splitOutputValue: List<String>? = c.outputValue?.trim()
@@ -259,7 +301,8 @@ class CalculatorViewModel : ViewModel() {
             // Add minus sign in the beginning if current output value is empty and current operator is minus
             if (c.currentOperator === Calculator.Operator.MINUS && c.outputValue?.isEmpty() == true) {
                 // Set output value to the second split output value
-                c.outputValue = c.getOperationSign(Calculator.Operator.MINUS) + splitOutputValue?.get(1)
+                c.outputValue =
+                    "${c.getOperationSign(Calculator.Operator.MINUS)}${splitOutputValue?.get(1)}"
                 // Set input value to the third split output value
                 c.inputValue = splitOutputValue?.get(2)
             } else { // Otherwise set input value to the second split output value
@@ -267,7 +310,7 @@ class CalculatorViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             if (c.debug) {
-                Log.d("SOJO Debug:",e.message.toString())
+                Log.d("SOJO Debug:", "CalculatorViewModel -> onEqual(error) : ${e.message}")
             }
 
             // Reset all values if Equal been pressed twice, otherwise reset all values except for the output value
@@ -324,20 +367,24 @@ class CalculatorViewModel : ViewModel() {
 
         // Show modified values for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:","Equal(after) : inputValue=" + c.inputValue + ", outputValue=" + c.outputValue + ", Display=" + display.value + ", currentOperation=" + c.getOperationSign(c.currentOperator) + ", hasResult=" + c.hasResult)
+            Log.d("SOJO Debug:",
+                "CalculatorViewModel -> onEqual(after) : inputValue=${c.inputValue}, outputValue=${c.outputValue}, Display=${display.value}, currentOperation=${
+                    c.getOperationSign(c.currentOperator)
+                }, hasResult=${c.hasResult}"
+            )
     }
 
     // ========= DISPLAY OUTPUT =========
     private fun displayOutput(output: String? = "0") {
         // Show values before they are modified for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:", "DisplayOutput(before) : output=$output, display=${display.value}")
+            Log.d("SOJO Debug:", "CalculatorViewModel -> DisplayOutput(before) : output=$output, display=${display.value}")
 
         // Display the output
         display.value = output.toString()
 
         // Show modified values for debugging in Logcat
         if (c.debug)
-            Log.d("SOJO Debug:", "DisplayOutput(after) : output=$output, display=${display.value}")
+            Log.d("SOJO Debug:", "CalculatorViewModel -> DisplayOutput(after) : output=$output, display=${display.value}")
     }
 }

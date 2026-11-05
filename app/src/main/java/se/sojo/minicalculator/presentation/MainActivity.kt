@@ -1,29 +1,36 @@
 package se.sojo.minicalculator.presentation
 
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.wear.compose.material3.AppScaffold
-import se.sojo.minicalculator.presentation.theme.SOJOMiniCalculatorTheme
+import androidx.wear.compose.material3.MaterialTheme
+import se.sojo.minicalculator.presentation.theme.AppTheme
 import se.sojo.minicalculator.presentation.ui.CalculatorScreen
 import java.text.DecimalFormatSymbols
 
 // Use debugging if needed
-const val DEBUG: Boolean = true
+const val DEBUG: Boolean = false
 
 // Max length of the display numbers
 const val MAX_INPUT_LENGTH: Int = 10
 
+@Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (DEBUG)
+            Log.d("SOJO Debug:", "MainActivity -> onCreate()")
+
         super.onCreate(savedInstanceState)
 
         // Check if it is a rounded wearable
@@ -36,24 +43,25 @@ class MainActivity : ComponentActivity() {
         val width = displayMetrics.widthPixels
         val height = displayMetrics.heightPixels
 
-        setContent {
-            WearApp(isScreenRound, width, height)
-        }
+        setContent { WearApp(isScreenRound, width, height) }
     }
 }
 
 @Composable
 fun WearApp(isScreenRound: Boolean, width: Int, height: Int) {
-    // Calculator background color
-    val backgroundColor = Color(Color(0xFF585A67).toArgb())
+    if (DEBUG)
+        Log.d("SOJO Debug:", "MainActivity -> WearApp()")
 
-    SOJOMiniCalculatorTheme {
+    // Calculator background color
+    val backgroundColor = MaterialTheme.colorScheme.background
+
+    AppTheme {
         AppScaffold(
             modifier = Modifier.background(backgroundColor),
             timeText = { } // Hide the clock
         ) {
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
             ) {
                 // Get decimal separator
                 val dfs = DecimalFormatSymbols()

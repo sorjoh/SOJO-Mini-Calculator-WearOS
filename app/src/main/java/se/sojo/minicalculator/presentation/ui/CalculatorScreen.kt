@@ -17,11 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import se.sojo.minicalculator.presentation.Calculator
 
@@ -39,12 +39,13 @@ fun CalculatorScreen(
 
     // Needed for the display output
     LaunchedEffect(key1 = viewModel.display.value) {
-       viewModel.display.value.let { Log.d("SOJO Debug:", it) }
+        if (calculator.debug)
+            viewModel.display.value.let { Log.d("SOJO Debug:", "CalculatorScreen : display=$it") }
     }
 
     // Show values for debugging in Logcat
     if (calculator.debug)
-        Log.d("SOJO Debug:", "UI : isScreenRound=$isScreenRound, width=$width, height=$height")
+        Log.d("SOJO Debug:", "CalculatorScreen : isScreenRound=$isScreenRound, width=$width, height=$height")
 
     // Adjust the padding based on the type and size of wearable
     //      Square = 360x360
@@ -66,24 +67,24 @@ fun CalculatorScreen(
     val spacer = 5.dp
 
     // Display background, text colors and font size
-    val displayBackgroundColor = Color(Color(0xFFC1D797).toArgb())
-    val displayTextColor = Color(Color(0xFFFDFFFE).toArgb())
+    val displayBackgroundColor = MaterialTheme.colorScheme.background
+    val displayTextColor = MaterialTheme.colorScheme.onBackground
     val displayTextFontSize = when (width) {
         in 0..401 -> 22.sp
         else -> 24.sp
     }
 
     // Number background, text colors and font size
-    val numberBackgroundColor = Color(Color(0xFF3A3D46).toArgb())
-    val numberTextColor = Color(Color(0xFFFDFFFE).toArgb())
+    val numberBackgroundColor = MaterialTheme.colorScheme.primary
+    val numberTextColor = MaterialTheme.colorScheme.onPrimary
     val numberTextFontSize = when (width) {
         in 0..401 -> 20.sp
         else -> 24.sp
     }
 
     // Function background, text colors and font size
-    val functionBackgroundColor = Color(Color(0xFFBABEC1).toArgb())
-    val functionTextColor = Color(Color(0xFFFDFFFE).toArgb())
+    val functionBackgroundColor = MaterialTheme.colorScheme.secondary
+    val functionTextColor = MaterialTheme.colorScheme.onSecondary
     val functionTextFontSize = when (width) {
         in 0..401 -> 16.sp
         else -> 20.sp
@@ -324,8 +325,8 @@ fun CalculatorScreen(
             CalculatorButton(
                 text = calculator.decimalSeparator.toString(),
                 fontSize = functionTextFontSize,
-                backgroundColor = functionBackgroundColor,
-                textColor = functionTextColor,
+                backgroundColor = numberBackgroundColor,
+                textColor = numberTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
                 shapeSize = roundedCornerSize,
@@ -336,8 +337,8 @@ fun CalculatorScreen(
             CalculatorButton(
                 text = "=",
                 fontSize = functionTextFontSize,
-                backgroundColor = functionBackgroundColor,
-                textColor = functionTextColor,
+                backgroundColor = MaterialTheme.colorScheme.tertiary,
+                textColor = MaterialTheme.colorScheme.onTertiary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(columnWidth),
                 shapeSize = roundedCornerSize,

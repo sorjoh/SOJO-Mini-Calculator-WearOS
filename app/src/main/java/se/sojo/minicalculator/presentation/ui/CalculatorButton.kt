@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Text
 import se.sojo.minicalculator.R
 
+// ========= CALCULATOR BUTTON =========
 @Composable
 fun CalculatorButton(
     text: String,
